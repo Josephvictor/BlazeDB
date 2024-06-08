@@ -48,11 +48,10 @@ public class Main {
 
         in.close();
         out.close(); 
+        clientSocket.close();
+        serverSocket.close();
        } catch (IOException e) {
          System.out.println("IOException: " + e.getMessage());
-       } finally {
-          clientSocket.close();
-          serverSocket.close();
        }
   }
 }
