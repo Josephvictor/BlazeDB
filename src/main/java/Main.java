@@ -32,7 +32,7 @@ public class Main {
         out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
         System.out.println("in and out created");
 
-        out.write("+PONG\r\n");
+        clientSocket.getOutputStream().write("+PONG\r\n".getBytes());
 
         // List<String> headers = new ArrayList<>();
         // String header;
