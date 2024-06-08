@@ -30,10 +30,11 @@ public class Main {
         System.out.println(headers);
         
         String response = "";
-        if(headers.equalsIgnoreCase("PING")){
+        if(headers.contains("PING")){
           response = "+PONG\r\n";
         }
-
+        
+        System.out.println(response);
         out.write(response);
          
        } catch (IOException e) {
