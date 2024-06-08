@@ -13,6 +13,9 @@ public class Main {
 
        ServerSocket serverSocket = null;
        Socket clientSocket = null;
+       BufferedReader in = null;
+       BufferedWriter out = null;
+
        int port = 6379;
 
        try {
@@ -25,27 +28,31 @@ public class Main {
          clientSocket = serverSocket.accept();
          System.out.println("Connection made: "+clientSocket.getInetAddress());
 
-        BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-        BufferedWriter out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
+        in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
 
-        List<String> headers = new ArrayList<>();
-        String header;
-        while(!(header = in.readLine()).isEmpty()){
-          headers.add(header);
-        }
+        out.write("+PONG\r\n");
 
-        System.out.println("[headers] "+headers);
+        // List<String> headers = new ArrayList<>();
+        // String header;
+        // while(!(header = in.readLine()).isEmpty()){
+        //   headers.add(header);
+        // }
+
+        // System.out.println("[headers] "+headers);
         
-        String response = "+PONG\r\n";
+        // String response = "+PONG\r\n";
         
-        System.out.println("[response] "+response);
-        out.write(response);
+        // System.out.println("[response] "+response);
+        // out.write(response);
          
        } catch (IOException e) {
          System.out.println("IOException: " + e.getMessage());
        } finally {
-         clientSocket.close();
-         serverSocket.close();
+          in.close();
+          out.close();
+          clientSocket.close();
+          serverSocket.close();
        }
   }
 }
