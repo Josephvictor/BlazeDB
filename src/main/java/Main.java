@@ -45,12 +45,12 @@ public class Main {
         
         // System.out.println("[response] "+response);
         // out.write(response);
-         
+
+        in.close();
+        out.close(); 
        } catch (IOException e) {
          System.out.println("IOException: " + e.getMessage());
        } finally {
-          in.close();
-          out.close();
           clientSocket.close();
           serverSocket.close();
        }
