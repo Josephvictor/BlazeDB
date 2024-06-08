@@ -32,13 +32,14 @@ public class Main {
         out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
         System.out.println("in and out created");
 
-        clientSocket.getOutputStream().write("+PONG\r\n".getBytes());
+        List<String> headers = new ArrayList<>();
+        String header;
+        while(!(header = in.readLine()).isEmpty()){
+          headers.add(header);
+          System.out.println(headers);
+        }
 
-        // List<String> headers = new ArrayList<>();
-        // String header;
-        // while(!(header = in.readLine()).isEmpty()){
-        //   headers.add(header);
-        // }
+        clientSocket.getOutputStream().write("+PONG\r\n".getBytes());
 
         // System.out.println("[headers] "+headers);
         
