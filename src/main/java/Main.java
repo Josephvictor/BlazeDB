@@ -32,28 +32,19 @@ public class Main {
         out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
         System.out.println("in and out created");
 
-        List<String> headers = new ArrayList<>();
-        String header;
-        while((header = in.readLine()) != ""){
-          headers.add(header);
-          System.out.println(headers);
+        while(true){
+          String cmd = in.readLine();
+          if(cmd == null) break;
+          clientSocket.getOutputStream().write("+PONG\r\n".getBytes());
         }
-
-        clientSocket.getOutputStream().write("+PONG\r\n".getBytes());
-
-        // System.out.println("[headers] "+headers);
         
-        // String response = "+PONG\r\n";
-        
-        // System.out.println("[response] "+response);
-        // out.write(response);
-
-        // in.close();
-        // out.close(); 
-        // clientSocket.close();
-        // serverSocket.close();
        } catch (IOException e) {
          System.out.println("IOException: " + e.getMessage());
+       } finally{
+        in.close();
+        out.close(); 
+        clientSocket.close();
+        serverSocket.close();
        }
   }
 }
