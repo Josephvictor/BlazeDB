@@ -34,6 +34,7 @@ public class Main {
 
         while(true){
           String cmd = in.readLine();
+          System.out.println(cmd);
           if(cmd == null) break;
           if(cmd.equalsIgnoreCase("PING"))
             clientSocket.getOutputStream().write("+PONG\r\n".getBytes());
