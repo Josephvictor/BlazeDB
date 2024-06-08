@@ -27,14 +27,11 @@ public class Main {
         BufferedWriter out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
 
         String headers = in.readLine();
-        System.out.println(headers);
+        System.out.println("[headers] "+headers);
         
-        String response = "";
-        if(headers.contains("PING")){
-          response = "+PONG\r\n";
-        }
+        String response = "+PONG\r\n";
         
-        System.out.println(response);
+        System.out.println("[response] "+response);
         out.write(response);
          
        } catch (IOException e) {
