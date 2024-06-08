@@ -34,7 +34,7 @@ public class Main {
 
         List<String> headers = new ArrayList<>();
         String header;
-        while((header = in.readLine()) != null){
+        while((header = in.readLine()) != ""){
           headers.add(header);
           System.out.println(headers);
         }
