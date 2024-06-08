@@ -30,6 +30,7 @@ public class Main {
 
         in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
+        System.out.println("in and out created");
 
         out.write("+PONG\r\n");
 
