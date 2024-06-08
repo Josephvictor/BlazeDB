@@ -5,6 +5,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
   public static void main(String[] args) throws IOException{
@@ -26,7 +28,12 @@ public class Main {
         BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         BufferedWriter out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
 
-        String headers = in.readLine();
+        List<String> headers = new ArrayList<>();
+        String header;
+        while(!(header = in.readLine()).isEmpty()){
+          headers.add(header);
+        }
+
         System.out.println("[headers] "+headers);
         
         String response = "+PONG\r\n";
