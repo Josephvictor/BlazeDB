@@ -51,6 +51,8 @@ public class Main {
             System.out.println("[Received message] "+ message);
             
             List<String> parsedElements = RequestParser.parse(message);
+            System.out.println("[main] "+parsedElements);
+            
             String response = ProcessRequest.process(parsedElements);
             System.out.println("[Response] "+response);
             

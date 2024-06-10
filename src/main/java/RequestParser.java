@@ -15,7 +15,7 @@ public class RequestParser {
             int numOfElements = Integer.parseInt(parts[index].substring(1));
             index++;
             
-            for(int i = 1; i < numOfElements; i++){
+            for(int i = 0; i < numOfElements; i++){
                 if(parts[index].charAt(0) == '$'){
                     System.out.println(parts[index]);
 
