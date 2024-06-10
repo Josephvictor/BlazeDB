@@ -14,6 +14,8 @@ public class Main {
 
     int port = 6379;
     String role = "master";
+    String master_replid = "8371b4fb1155b71f4a04d3e1bc3e18c4a990aeeb";
+    String master_repl_offset = "0";
     String replicaOf = "";
 
     if(args.length >= 2){
@@ -33,7 +35,10 @@ public class Main {
     serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
 
     System.out.println("***Server started***");
+    
     Storage.addServerInfo("role", role);
+    Storage.addServerInfo("master_replid", master_replid);
+    Storage.addServerInfo("master_repl_offset", master_repl_offset);
 
     while(true){
       int conns = selector.select();
