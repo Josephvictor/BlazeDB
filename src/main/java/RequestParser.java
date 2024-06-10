@@ -33,8 +33,9 @@ public class RequestParser {
                 index++;
             }
         }else{
-            System.err.println("[RequestParser] Invalid request");
-            return null;
+            // System.err.println("[RequestParser] Invalid request");
+            // return null;
+            
         }
         return parsedElements;
     }
