@@ -16,7 +16,7 @@ public class Main {
     String role = "master";
     String master_replid = "8371b4fb1155b71f4a04d3e1bc3e18c4a990aeeb";
     String master_repl_offset = "0";
-    String replicaOf = "";
+    String replicaOf = "";  
 
     if(args.length >= 2){
       for(int i = 0; i < args.length; i=i+2){

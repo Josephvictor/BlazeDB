@@ -55,7 +55,7 @@ public class ProcessRequest {
                 response += encodedVal;
             }
         }
-        System.out.println("[storage] "+response);
+        System.out.println("[storage] "+response+" [length in bytes] "+response.getBytes().length);
         return response;
     }
 }
