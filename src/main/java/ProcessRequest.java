@@ -47,13 +47,13 @@ public class ProcessRequest {
             if(value.equals("-1"))  response = ResponseEncoder.NullBulkString();
             else response = ResponseEncoder.BulkEncoder(value);
         } else if(command.equalsIgnoreCase("INFO")){
-            StringBuilder str = new StringBuilder();
             Map<String, String> ServerInfo = Storage.getServerInfo();
             for(Map.Entry<String, String> entrySet : ServerInfo.entrySet()){
                 String value = entrySet.getKey()+":"+entrySet.getValue();
-                str.append(ResponseEncoder.BulkEncoder(value));
+                String encodedVal = ResponseEncoder.BulkEncoder(value);
+                System.out.println("[storage] "+encodedVal);
+                response += encodedVal;
             }
-            response = str.toString();
         }
 
         return response;
