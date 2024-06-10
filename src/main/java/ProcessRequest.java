@@ -26,8 +26,8 @@ public class ProcessRequest {
                 Storage.addKeyValue(key, value, 0L);
                 response = ResponseEncoder.SimpleEncoder("OK");
             }else{
-                String arg1 = parsedElements.get(4);
-                long ttl = Long.parseLong(parsedElements.get(5));
+                String arg1 = parsedElements.get(3);
+                long ttl = Long.parseLong(parsedElements.get(4));
                 long expirationTime = System.currentTimeMillis() + ttl;
                 Storage.addKeyValue(key, value, expirationTime);
                 response = ResponseEncoder.SimpleEncoder("OK");
