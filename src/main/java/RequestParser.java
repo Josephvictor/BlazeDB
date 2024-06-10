@@ -17,9 +17,12 @@ public class RequestParser {
             
             for(int i = 0; i < numOfElements; i++){
                 if(parts[index].charAt(0) == '$'){
+                    System.out.println(parts[index]);
+
                     int length = Integer.parseInt(parts[index].substring(1));
                     index++;
                     String element = parts[index];
+                    System.out.println(element);
                     if(element.length() == length){
                         parsedElements.add(element);
                     }
