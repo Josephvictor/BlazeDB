@@ -60,7 +60,7 @@ public class Main {
 
         }else if(key.isReadable()){
           SocketChannel clientChannel = (SocketChannel) key.channel();
-          ByteBuffer buffer = ByteBuffer.allocate(256);
+          ByteBuffer buffer = ByteBuffer.allocate(10000);
           int byteRead = clientChannel.read(buffer);
           
           if(byteRead == -1){
