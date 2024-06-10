@@ -15,4 +15,8 @@ public class ResponseEncoder {
         String response = String.format("%s%d%s%s%s%s%s",BulkStrings,length,Cr,Lf,message,Cr,Lf);
         return response;
     }
+
+    public static String NullBulkString(){
+        return String.format("%s-1%s%s",BulkStrings,Cr,Lf);
+    }
 }

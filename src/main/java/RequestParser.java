@@ -1,11 +1,12 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class RequestParser {
     
     public static List<String> parse(String request){
         String[] parts = request.split("\r\n");
-        System.out.println("[parts] "+parts);
+        System.out.println("[parts] "+Arrays.toString(parts));
 
         int index = 0;
         List<String> parsedElements = new ArrayList<>();
