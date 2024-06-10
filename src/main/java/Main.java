@@ -12,9 +12,14 @@ import java.util.Set;
 public class Main {
   public static void main(String[] args) throws IOException{
 
+    int port = 6379;
+    if(args.length == 2){
+      if(args[0].equalsIgnoreCase("--port"))  port = Integer.valueOf(args[1]);
+    }
+
     Selector selector = Selector.open();
     ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
-    serverSocketChannel.bind(new InetSocketAddress("localhost", 6379));
+    serverSocketChannel.bind(new InetSocketAddress("localhost", port));
     serverSocketChannel.configureBlocking(false);
     serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
 
@@ -52,7 +57,7 @@ public class Main {
             
             List<String> parsedElements = RequestParser.parse(message);
             System.out.println("[main] "+parsedElements);
-            
+
             String response = ProcessRequest.process(parsedElements);
             System.out.println("[Response] "+response);
             
