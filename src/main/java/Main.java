@@ -47,7 +47,7 @@ public class Main {
           }else{
             buffer.flip();
             String message = new String(buffer.array()).trim();
-            System.out.println("[Received message: ]"+message);
+            System.out.println("[Received message] "+ message.toString());
 
             String response = "+PONG\r\n";
             if(message.contains("PING")){
