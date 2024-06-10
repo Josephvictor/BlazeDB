@@ -6,6 +6,7 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 public class Main {
@@ -47,15 +48,16 @@ public class Main {
           }else{
             buffer.flip();
             String message = new String(buffer.array()).trim();
-            System.out.println("[Received message] "+ message.toString());
-
-            String response = "+PONG\r\n";
-            if(message.contains("PING")){
-              buffer.clear();
-              buffer.put(response.getBytes());
-              buffer.flip();
-              clientChannel.write(buffer);
-            }
+            System.out.println("[Received message] "+ message);
+            
+            List<String> parsedElements = RequestParser.parse(message);
+            String response = ProcessRequest.process(parsedElements);
+            System.out.println("[Response] "+response);
+            
+            buffer.clear();
+            buffer.put(response.getBytes());
+            buffer.flip();
+            clientChannel.write(buffer);
             buffer.clear();
           }
         }
