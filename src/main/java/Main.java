@@ -79,7 +79,9 @@ public class Main {
             buffer.clear();
             buffer.put(response.getBytes());
             buffer.flip();
-            clientChannel.write(buffer);
+            while(buffer.hasRemaining()){
+              clientChannel.write(buffer);
+            }
             buffer.clear();
           }
         }
