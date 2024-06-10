@@ -51,7 +51,7 @@ public class ProcessRequest {
             Map<String, String> ServerInfo = Storage.getServerInfo();
             for(Map.Entry<String, String> entrySet : ServerInfo.entrySet()){
                 String value = entrySet.getKey()+":"+entrySet.getValue();
-                str.append(value);
+                str.append("\r\n"+value);
             }
             response = str.toString();
         }
