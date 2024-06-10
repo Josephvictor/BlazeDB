@@ -24,6 +24,7 @@ public class Main {
     serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
 
     System.out.println("***Server started***");
+    Storage.addServerInfo("role", "master");
 
     while(true){
       int conns = selector.select();

@@ -2,7 +2,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Storage {
-    
+    private static Map<String, String> ServerInfo = new HashMap<>();
     private static Map<String, ValueWithTTL> keyValueStore = new HashMap<>();
 
     public static void addKeyValue(String key, String value, long expirationTime){
@@ -26,5 +26,13 @@ public class Storage {
         }
 
         return value;
+    }
+
+    public static void addServerInfo(String key, String value){
+        ServerInfo.put(key, value);
+    }
+
+    public static Map<String, String> getServerInfo(){
+        return ServerInfo;
     }
 }

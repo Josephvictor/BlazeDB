@@ -1,4 +1,5 @@
 import java.util.List;
+import java.util.Map;
 
 public class ProcessRequest {
     
@@ -45,6 +46,12 @@ public class ProcessRequest {
 
             if(value.equals("-1"))  response = ResponseEncoder.NullBulkString();
             else response = ResponseEncoder.BulkEncoder(value);
+        } else if(command.equalsIgnoreCase("INFO")){
+            Map<String, String> ServerInfo = Storage.getServerInfo();
+            for(Map.Entry<String, String> entrySet : ServerInfo.entrySet()){
+                String value = entrySet.getKey()+":"+entrySet.getValue();
+                response += ResponseEncoder.BulkEncoder(value);
+            }
         }
 
         return response;
