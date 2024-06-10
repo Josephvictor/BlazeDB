@@ -13,8 +13,17 @@ public class Main {
   public static void main(String[] args) throws IOException{
 
     int port = 6379;
-    if(args.length == 2){
-      if(args[0].equalsIgnoreCase("--port"))  port = Integer.valueOf(args[1]);
+    String role = "master";
+    String replicaOf = "";
+
+    if(args.length >= 2){
+      for(int i = 0; i < args.length; i=i+2){
+        if(args[i].equalsIgnoreCase("--port"))  port = Integer.valueOf(args[i+1]);
+        else if(args[i].equalsIgnoreCase("--replicaof")){
+          replicaOf = args[i+1];
+          role = "slave";
+        }
+      }
     }
 
     Selector selector = Selector.open();
@@ -24,7 +33,7 @@ public class Main {
     serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
 
     System.out.println("***Server started***");
-    Storage.addServerInfo("role", "master");
+    Storage.addServerInfo("role", role);
 
     while(true){
       int conns = selector.select();
