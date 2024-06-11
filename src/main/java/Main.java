@@ -48,13 +48,10 @@ public class Main {
       SocketChannel socketChannel = SocketChannel.open();
       socketChannel.configureBlocking(false);
       socketChannel.register(selector, SelectionKey.OP_WRITE);
-
+      ByteBuffer buffer = ByteBuffer.allocate(254);
+      
       System.out.println("[main] Establishing connection to master");
       socketChannel.connect(new InetSocketAddress(mHostAndmPort[0], Integer.parseInt(mHostAndmPort[1])));
-      System.out.println("[main] Master connection established");
-
-      ByteBuffer buffer = ByteBuffer.allocate(254);
-
       //Make handshake
       //1.PING
       String connRequest = ResponseEncoder.ArraysEncoder("PING");
@@ -65,6 +62,9 @@ public class Main {
         socketChannel.write(buffer);
       }
       buffer.clear();
+      
+      System.out.println("[main] Master connection established");
+
     }
       
 
