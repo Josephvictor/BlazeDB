@@ -52,20 +52,25 @@ public class Main {
 
       System.out.println("[main] Establishing connection to master");
       socketChannel.connect(new InetSocketAddress(mHostAndmPort[0], Integer.parseInt(mHostAndmPort[1])));
+      while(!socketChannel.finishConnect()){
+        System.out.println("[main] Waiting for connection to fully establish");
+      }
+      System.out.println("[main] Master connection established");
       //Make handshake
       //1.PING
       String connRequest = ResponseEncoder.ArraysEncoder("PING");
       System.out.println("[main][connRequest] "+connRequest);
-      
+
       buffer.clear();
       buffer.put(connRequest.getBytes());
       buffer.flip();
+      System.out.println("[main][buffer] **started writing**");
       while(buffer.hasRemaining()){
         socketChannel.write(buffer);
       }
       buffer.clear();
       
-      System.out.println("[main] Master connection established");
+      
 
     }
       
