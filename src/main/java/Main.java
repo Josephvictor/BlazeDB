@@ -11,13 +11,13 @@ import java.util.List;
 import java.util.Set;
 
 public class Main {
-  public static void main(String[] args) throws IOException{
 
-    int port = 6379;
-    String role = "master";
-    String master_replid = "8371b4fb1155b71f4a04d3e1bc3e18c4a990aeeb";
-    String master_repl_offset = "0";
-    String[] mHostAndmPort = null;
+  private static int port = 6379;
+  private static String role = "master";
+  private static String master_replid = "8371b4fb1155b71f4a04d3e1bc3e18c4a990aeeb";
+  private static String master_repl_offset = "0";
+  private static String[] mHostAndmPort = null;
+  public static void main(String[] args) throws IOException{
 
     if(args.length >= 2){
       for(int i = 0; i < args.length; i=i+2){
@@ -64,7 +64,6 @@ public class Main {
 
     }
       
-
     while(true){
       int conns = selector.select();
       if(conns == 0)  continue;
@@ -101,22 +100,16 @@ public class Main {
             
             ByteBuffer responseBuffer = ByteBuffer.allocate(254);
             responseBuffer.put(response.getBytes());
-            responseBuffer.flip();
 
             // Attach the response buffer to the key and switch to write mode
             key.attach(responseBuffer);
             key.interestOps(SelectionKey.OP_WRITE);
-            
-            //writeToChannel(clientChannel, message, buffer);
           }
         }else if(key.isWritable()){
           SocketChannel socketChannel = (SocketChannel) key.channel();
-
           ByteBuffer buffer = (ByteBuffer) key.attachment();
-          // String response = (String) key.attachment();
+          
           if(buffer != null){
-            //System.out.println("[writable] "+response);
-            //buffer.get(response.getBytes());
             buffer.flip();
             while(buffer.hasRemaining()){
               socketChannel.write(buffer);
@@ -129,5 +122,9 @@ public class Main {
         iterator.remove();
       }
     }
+  }
+
+  public static int getPort(){
+    return port;
   }
 }

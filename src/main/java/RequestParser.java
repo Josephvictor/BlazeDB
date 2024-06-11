@@ -8,9 +8,9 @@ public class RequestParser {
         String[] parts = request.split("\r\n");
         System.out.println("[parts] "+Arrays.toString(parts));
 
-        int index = 0;
         List<String> parsedElements = new ArrayList<>();
 
+        int index = 0;
         if(parts[index].charAt(0) == '*'){
             int numOfElements = Integer.parseInt(parts[index].substring(1));
             index++;
@@ -33,9 +33,7 @@ public class RequestParser {
                 index++;
             }
         }else{
-            // System.err.println("[RequestParser] Invalid request");
-            // return null;
-            
+            parsedElements.add(parts[index].substring(1));
         }
         return parsedElements;
     }

@@ -55,6 +55,10 @@ public class ProcessRequest {
                 string.append(value);
                 response = ResponseEncoder.BulkEncoder(string.toString());
             }
+        } else if(command.equalsIgnoreCase("PONG")){
+            response = ResponseEncoder.ArraysEncoder("REPLCONF", "listening-port", String.valueOf(Main.getPort()));
+        } else if(command.equalsIgnoreCase("OK")){
+            response = ResponseEncoder.ArraysEncoder("REPLCONF", "capa", "psync2");
         }
         
         return response;
