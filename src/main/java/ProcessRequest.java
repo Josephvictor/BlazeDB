@@ -58,7 +58,14 @@ public class ProcessRequest {
         } else if(command.equalsIgnoreCase("PONG")){
             response = ResponseEncoder.ArraysEncoder("REPLCONF", "listening-port", String.valueOf(Main.getPort()));
         } else if(command.equalsIgnoreCase("OK")){
-            response = ResponseEncoder.ArraysEncoder("REPLCONF", "capa", "psync2");
+            
+            if(parsedElements.get(1).equals(State.SENT_REPLCONF_PORT.toString()))
+                response = ResponseEncoder.ArraysEncoder("REPLCONF", "capa", "psync2");
+            else if(parsedElements.get(1).equals(State.SENT_PSYNC.toString()))
+                response = ResponseEncoder.ArraysEncoder("PSYNC", "?", "-1");
+            else
+                response = ""; 
+                
         }
         
         return response;

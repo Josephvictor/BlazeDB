@@ -19,10 +19,6 @@ public class Main {
   private static String[] mHostAndmPort = null;
 
   //Track the 3 way handshake process
-  private enum State{
-    INITIAL, SENT_PING, SENT_REPLCONF_PORT, SENT_REPLCONF_CAPA, COMPLETE
-  }
-
   private static State state = State.INITIAL;
 
   public static void main(String[] args) throws IOException{
@@ -63,7 +59,12 @@ public class Main {
       socketChannel.keyFor(selector).attach(buffer);
       state = State.SENT_PING;
     }
-      
+
+    eventLoop(selector);
+  }
+
+  private static void eventLoop(Selector selector) throws IOException{
+    
     while(true){
       int conns = selector.select();
       if(conns == 0)  continue;
@@ -73,66 +74,82 @@ public class Main {
 
       while(iterator.hasNext()){
         SelectionKey key = iterator.next();
-        
         if(key.isAcceptable()){
-          ServerSocketChannel serverChannel = (ServerSocketChannel) key.channel();
+          handleConnection(key, selector);
+        }else if(key.isReadable()){
+          handleRead(key);
+        }else if(key.isWritable()){
+          handleWrite(key);
+        }
+        iterator.remove();
+      }
+    }
+  }
+
+  public static void handleConnection(SelectionKey key, Selector selector) throws IOException{
+    ServerSocketChannel serverChannel = (ServerSocketChannel) key.channel();
           SocketChannel clientChannel = serverChannel.accept();
           
           clientChannel.configureBlocking(false);
           clientChannel.register(selector, SelectionKey.OP_READ);
           System.out.println("Connection accepted: "+ clientChannel.getRemoteAddress());
+  }
 
-        }else if(key.isReadable()){
-          SocketChannel socketChannel = (SocketChannel) key.channel();
-          ByteBuffer buffer = ByteBuffer.allocate(254);
-          int byteRead = socketChannel.read(buffer);
-          if(byteRead == -1){
-            socketChannel.close();
-          }else{
-            String message = new String(buffer.array()).trim();
-            System.out.println("[Received message] "+ message);
-            
-            List<String> parsedElements = RequestParser.parse(message);
-            System.out.println("[main] "+parsedElements);
+  public static void handleRead(SelectionKey key) throws IOException{
 
-            String response = ProcessRequest.process(parsedElements);
-            System.out.println("[Response] "+response);
-            
-            ByteBuffer responseBuffer = ByteBuffer.allocate(254);
-            responseBuffer.put(response.getBytes());
+    SocketChannel socketChannel = (SocketChannel) key.channel();
+    ByteBuffer buffer = ByteBuffer.allocate(254);
+    int byteRead = socketChannel.read(buffer);
+    if(byteRead == -1){
+      socketChannel.close();
+    }else{
+      String message = new String(buffer.array()).trim();
+      System.out.println("[Received message] "+ message);
+      
+      List<String> parsedElements = RequestParser.parse(message);
+      System.out.println("[main] "+parsedElements);
+      if(parsedElements.get(0).equals("OK")){
+        parsedElements.add(state.toString());
+      }
 
-            System.out.println("currentState: "+state);
-            System.out.println("[command] "+parsedElements.get(0));
-            if(state == State.SENT_REPLCONF_CAPA && parsedElements.get(0).equals("OK")){
-              state = State.COMPLETE;
-            } else{
-              // Attach the response buffer to the key and switch to write mode
-              key.attach(responseBuffer);
-              key.interestOps(SelectionKey.OP_WRITE);
-              if(state == State.SENT_PING && parsedElements.get(0).equals("PONG")){
-                state = State.SENT_REPLCONF_PORT;
-              }else if(state == State.SENT_REPLCONF_PORT && parsedElements.get(0).equals("OK")){
-                state = State.SENT_REPLCONF_CAPA;
-              }
-            }
-          }
-        }else if(key.isWritable()){
-          SocketChannel socketChannel = (SocketChannel) key.channel();
-          ByteBuffer buffer = (ByteBuffer) key.attachment();
-          
-          if(buffer != null){
-            buffer.flip();
-            while(buffer.hasRemaining()){
-              socketChannel.write(buffer);
-            }
-          }
-          buffer.clear();
-          key.attach(null);
-          key.interestOps(SelectionKey.OP_READ);
+      String response = ProcessRequest.process(parsedElements);
+      System.out.println("[Response] "+response);
+      
+      ByteBuffer responseBuffer = ByteBuffer.allocate(254);
+      responseBuffer.put(response.getBytes());
+
+      System.out.println("currentState: "+state);
+      System.out.println("[command] "+parsedElements.get(0));
+      if(state == State.SENT_PSYNC && parsedElements.get(0).equals("FULLRESYNC")){
+        state = State.COMPLETE;
+      } else{
+        // Attach the response buffer to the key and switch to write mode
+        key.attach(responseBuffer);
+        key.interestOps(SelectionKey.OP_WRITE);
+        if(state == State.SENT_PING && parsedElements.get(0).equals("PONG")){
+          state = State.SENT_REPLCONF_PORT;
+        }else if(state == State.SENT_REPLCONF_PORT && parsedElements.get(0).equals("OK")){
+          state = State.SENT_REPLCONF_CAPA;
+        } else if(state == State.SENT_REPLCONF_CAPA && parsedElements.get(0).equals("OK")){
+          state = State.SENT_PSYNC;
         }
-        iterator.remove();
       }
     }
+  }
+
+  public static void handleWrite(SelectionKey key) throws IOException{
+    SocketChannel socketChannel = (SocketChannel) key.channel();
+    ByteBuffer buffer = (ByteBuffer) key.attachment();
+    
+    if(buffer != null){
+      buffer.flip();
+      while(buffer.hasRemaining()){
+        socketChannel.write(buffer);
+      }
+    }
+    buffer.clear();
+    key.attach(null);
+    key.interestOps(SelectionKey.OP_READ);
   }
 
   public static int getPort(){
