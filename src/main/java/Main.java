@@ -57,7 +57,10 @@ public class Main {
       socketChannel.register(selector, SelectionKey.OP_WRITE);
       //Send the PING request
       String connRequest = ResponseEncoder.ArraysEncoder("PING");
-      socketChannel.keyFor(selector).attach(connRequest);
+      ByteBuffer buffer = ByteBuffer.allocate(254);
+      buffer.put(connRequest.getBytes());
+      
+      socketChannel.keyFor(selector).attach(buffer);
 
     }
       
