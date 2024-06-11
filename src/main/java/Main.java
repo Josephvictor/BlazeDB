@@ -96,10 +96,12 @@ public class Main {
             String response = ProcessRequest.process(parsedElements);
             System.out.println("[Response] "+response);
             
-            buffer.clear();
-            buffer.flip();
-            buffer.put(response.getBytes());
-            key.attach(buffer);
+            ByteBuffer responseBuffer = ByteBuffer.allocate(254);
+            responseBuffer.put(response.getBytes());
+            responseBuffer.flip();
+
+            // Attach the response buffer to the key and switch to write mode
+            key.attach(responseBuffer);
             key.interestOps(SelectionKey.OP_WRITE);
             
             //writeToChannel(clientChannel, message, buffer);
