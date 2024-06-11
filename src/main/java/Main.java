@@ -17,17 +17,17 @@ public class Main {
   private static String master_replid = "8371b4fb1155b71f4a04d3e1bc3e18c4a990aeeb";
   private static String master_repl_offset = "0";
   private static String[] mHostAndmPort = null;
+
+  //Track the 3 way handshake process
+  private enum State{
+    INITIAL, SENT_PING, SENT_REPLCONF_PORT, SENT_REPLCONF_CAPA, COMPLETE
+  }
+
+  private static State state = State.INITIAL;
+
   public static void main(String[] args) throws IOException{
 
-    if(args.length >= 2){
-      for(int i = 0; i < args.length; i=i+2){
-        if(args[i].equalsIgnoreCase("--port"))  port = Integer.valueOf(args[i+1]);
-        else if(args[i].equalsIgnoreCase("--replicaof")){
-          mHostAndmPort = args[i+1].split(" ");
-          role = "slave";
-        }
-      }
-    }
+    processArguments(args);
     System.out.println("[Master][host] and [port] "+Arrays.toString(mHostAndmPort));
 
     Selector selector = Selector.open();
@@ -61,7 +61,7 @@ public class Main {
       buffer.put(connRequest.getBytes());
       
       socketChannel.keyFor(selector).attach(buffer);
-
+      state = State.SENT_PING;
     }
       
     while(true){
@@ -103,6 +103,16 @@ public class Main {
 
             // Attach the response buffer to the key and switch to write mode
             key.attach(responseBuffer);
+
+            //Change states for the 3 way handshake
+            if(state == State.SENT_PING){
+              state = State.SENT_REPLCONF_PORT;
+            }else if(state == State.SENT_REPLCONF_PORT){
+              state = State.SENT_REPLCONF_CAPA;
+            } else if(state == State.SENT_REPLCONF_CAPA){
+              key.attach(null);
+              continue;
+            }
             key.interestOps(SelectionKey.OP_WRITE);
           }
         }else if(key.isWritable()){
@@ -127,4 +137,17 @@ public class Main {
   public static int getPort(){
     return port;
   }
+
+  private static void processArguments(String[] args){
+    if(args.length >= 2){
+      for(int i = 0; i < args.length; i=i+2){
+        if(args[i].equalsIgnoreCase("--port"))  port = Integer.valueOf(args[i+1]);
+        else if(args[i].equalsIgnoreCase("--replicaof")){
+          mHostAndmPort = args[i+1].split(" ");
+          role = "slave";
+        }
+      }
+    }
+  }
+
 }
