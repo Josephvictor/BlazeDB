@@ -101,6 +101,7 @@ public class Main {
             ByteBuffer responseBuffer = ByteBuffer.allocate(254);
             responseBuffer.put(response.getBytes());
 
+            System.out.println("currentState: "+state);
             //Change states for the 3 way handshake
             if(state == State.SENT_PING && parsedElements.get(0).equals("+PONG")){
               state = State.SENT_REPLCONF_PORT;
