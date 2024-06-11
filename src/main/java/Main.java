@@ -101,19 +101,21 @@ public class Main {
             ByteBuffer responseBuffer = ByteBuffer.allocate(254);
             responseBuffer.put(response.getBytes());
 
-            // Attach the response buffer to the key and switch to write mode
-            key.attach(responseBuffer);
-
             //Change states for the 3 way handshake
             if(state == State.SENT_PING){
               state = State.SENT_REPLCONF_PORT;
+              // Attach the response buffer to the key and switch to write mode
+              key.attach(responseBuffer);
+              key.interestOps(SelectionKey.OP_WRITE);
             }else if(state == State.SENT_REPLCONF_PORT){
               state = State.SENT_REPLCONF_CAPA;
+              // Attach the response buffer to the key and switch to write mode
+              key.attach(responseBuffer);
+              key.interestOps(SelectionKey.OP_WRITE);
             } else if(state == State.SENT_REPLCONF_CAPA){
-              key.attach(null);
-              continue;
+              state = State.COMPLETE;
             }
-            key.interestOps(SelectionKey.OP_WRITE);
+            
           }
         }else if(key.isWritable()){
           SocketChannel socketChannel = (SocketChannel) key.channel();
