@@ -102,17 +102,17 @@ public class Main {
             responseBuffer.put(response.getBytes());
 
             //Change states for the 3 way handshake
-            if(state == State.SENT_PING){
+            if(state == State.SENT_PING && response.equals("+PONG")){
               state = State.SENT_REPLCONF_PORT;
               // Attach the response buffer to the key and switch to write mode
               key.attach(responseBuffer);
               key.interestOps(SelectionKey.OP_WRITE);
-            }else if(state == State.SENT_REPLCONF_PORT){
+            }else if(state == State.SENT_REPLCONF_PORT && response.equals("+OK")){
               state = State.SENT_REPLCONF_CAPA;
               // Attach the response buffer to the key and switch to write mode
               key.attach(responseBuffer);
               key.interestOps(SelectionKey.OP_WRITE);
-            } else if(state == State.SENT_REPLCONF_CAPA){
+            } else if(state == State.SENT_REPLCONF_CAPA && response.equals("+OK")){
               state = State.COMPLETE;
             }
             
