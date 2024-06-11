@@ -21,7 +21,17 @@ public class ResponseEncoder {
         return String.format("%s-1%s%s",BulkStrings,Cr,Lf);
     }
 
-    public static String ArraysEncoder(String message){
-        return String.format("%s1%s%s%s%d%s%s%s%s%s", Arrays,Cr,Lf,BulkStrings,message.length(),Cr,Lf,message,Cr,Lf);
+    public static String ArraysEncoder(String... message){
+        //return String.format("%s1%s%s%s%d%s%s%s%s%s", Arrays,Cr,Lf,BulkStrings,message.length,Cr,Lf,message,Cr,Lf);
+        int length = message.length;
+        StringBuilder str = new StringBuilder();
+        
+        str.append(String.format("%s%d%s%s",Arrays,length,Cr,Lf));
+        
+        for(String msg : message){
+            str.append(String.format("%s%d%s%s%s%s%s",BulkStrings,msg.length(),Cr,Lf,msg,Cr,Lf));
+        }
+
+        return str.toString();
     }
 }

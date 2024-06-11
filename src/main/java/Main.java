@@ -48,7 +48,6 @@ public class Main {
       SocketChannel socketChannel = SocketChannel.open();
       socketChannel.configureBlocking(false);
       socketChannel.register(selector, SelectionKey.OP_WRITE);
-      ByteBuffer buffer = ByteBuffer.allocate(254);
 
       System.out.println("[main] Establishing connection to master");
       socketChannel.connect(new InetSocketAddress(mHostAndmPort[0], Integer.parseInt(mHostAndmPort[1])));
@@ -56,22 +55,25 @@ public class Main {
         System.out.println("[main] Waiting for connection to fully establish");
       }
       System.out.println("[main] Master connection established");
+      
+      ByteBuffer buffer = ByteBuffer.allocate(254);
       //Make handshake
       //1.PING
       String connRequest = ResponseEncoder.ArraysEncoder("PING");
-      System.out.println("[main][connRequest] "+connRequest);
+      System.out.println("[MH PING][connRequest] "+connRequest);
+      writeToChannel(socketChannel, connRequest, buffer);
 
-      buffer.clear();
-      buffer.put(connRequest.getBytes());
-      buffer.flip();
-      System.out.println("[main][buffer] **started writing**");
-      while(buffer.hasRemaining()){
-        socketChannel.write(buffer);
+      //2.REPLCONF
+      int byteRead = socketChannel.read(buffer);
+      if(byteRead  > 0){
+        String response = ResponseEncoder.ArraysEncoder("REPLCONF", "listening-port", String.valueOf(port));
+        System.out.println("[MH RCF][response] "+connRequest);
+        writeToChannel(socketChannel, response, buffer);
+        response = ResponseEncoder.ArraysEncoder("REPLCONF", "capa", "psync2");
+        writeToChannel(socketChannel, response, buffer);
+      }else{
+        socketChannel.close();
       }
-      buffer.clear();
-      
-      
-
     }
       
 
@@ -96,6 +98,7 @@ public class Main {
         }else if(key.isReadable()){
           SocketChannel clientChannel = (SocketChannel) key.channel();
           ByteBuffer buffer = ByteBuffer.allocate(254);
+
           int byteRead = clientChannel.read(buffer);
           
           if(byteRead == -1){
@@ -111,17 +114,24 @@ public class Main {
             String response = ProcessRequest.process(parsedElements);
             System.out.println("[Response] "+response);
             
-            buffer.clear();
-            buffer.put(response.getBytes());
-            buffer.flip();
-            while(buffer.hasRemaining()){
-              clientChannel.write(buffer);
-            }
-            buffer.clear();
+            writeToChannel(clientChannel, message, buffer);
           }
         }
         iterator.remove();
       }
     }
+  }
+
+  private static void writeToChannel(SocketChannel socketChannel, String message, ByteBuffer buffer) throws IOException{
+
+    buffer.clear();
+    buffer.put(message.getBytes());
+    buffer.flip();
+    while(buffer.hasRemaining()){
+      socketChannel.write(buffer);
+    }
+    buffer.clear();
+    buffer.flip();
+    System.out.println("[writeToChannel] **Finished writing**");
   }
 }
