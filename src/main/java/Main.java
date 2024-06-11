@@ -96,7 +96,10 @@ public class Main {
             String response = ProcessRequest.process(parsedElements);
             System.out.println("[Response] "+response);
             
-            key.attach(response);
+            buffer.clear();
+            buffer.flip();
+            buffer.put(response.getBytes());
+            key.attach(buffer);
             key.interestOps(SelectionKey.OP_WRITE);
             
             //writeToChannel(clientChannel, message, buffer);
@@ -104,15 +107,15 @@ public class Main {
         }else if(key.isWritable()){
           SocketChannel socketChannel = (SocketChannel) key.channel();
 
-          ByteBuffer buffer = ByteBuffer.allocate(256);
-          String response = (String) key.attachment();
-          if(response != null){
-            System.out.println("[writable] "+response);
-            buffer.get(response.getBytes());
-          }
-          buffer.flip();
-          while(buffer != null && buffer.hasRemaining()){
-            socketChannel.write(buffer);
+          ByteBuffer buffer = (ByteBuffer) key.attachment();
+          // String response = (String) key.attachment();
+          if(buffer != null){
+            //System.out.println("[writable] "+response);
+            //buffer.get(response.getBytes());
+            buffer.flip();
+            while(buffer.hasRemaining()){
+              socketChannel.write(buffer);
+            }
           }
           buffer.clear();
           key.attach(null);
@@ -121,18 +124,5 @@ public class Main {
         iterator.remove();
       }
     }
-  }
-
-  private static void writeToChannel(SocketChannel socketChannel, String message, ByteBuffer buffer) throws IOException{
-
-    buffer.clear();
-    buffer.put(message.getBytes());
-    buffer.flip();
-    while(buffer.hasRemaining()){
-      socketChannel.write(buffer);
-    }
-    buffer.clear();
-    buffer.flip();
-    System.out.println("[writeToChannel] **Finished writing**");
   }
 }
