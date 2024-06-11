@@ -102,6 +102,7 @@ public class Main {
             responseBuffer.put(response.getBytes());
 
             System.out.println("currentState: "+state);
+            System.out.println("[command] "+parsedElements.get(0));
             //Change states for the 3 way handshake
             if(state == State.SENT_PING && parsedElements.get(0).equals("+PONG")){
               state = State.SENT_REPLCONF_PORT;
