@@ -104,17 +104,17 @@ public class Main {
             System.out.println("currentState: "+state);
             System.out.println("[command] "+parsedElements.get(0));
             //Change states for the 3 way handshake
-            if(state == State.SENT_PING && parsedElements.get(0).equals("+PONG")){
+            if(state == State.SENT_PING && parsedElements.get(0).equals("PONG")){
               state = State.SENT_REPLCONF_PORT;
               // Attach the response buffer to the key and switch to write mode
               key.attach(responseBuffer);
               key.interestOps(SelectionKey.OP_WRITE);
-            }else if(state == State.SENT_REPLCONF_PORT && parsedElements.get(0).equals("+OK")){
+            }else if(state == State.SENT_REPLCONF_PORT && parsedElements.get(0).equals("OK")){
               state = State.SENT_REPLCONF_CAPA;
               // Attach the response buffer to the key and switch to write mode
               key.attach(responseBuffer);
               key.interestOps(SelectionKey.OP_WRITE);
-            } else if(state == State.SENT_REPLCONF_CAPA && parsedElements.get(0).equals("+OK")){
+            } else if(state == State.SENT_REPLCONF_CAPA && parsedElements.get(0).equals("OK")){
               state = State.COMPLETE;
             }
             
