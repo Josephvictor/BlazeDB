@@ -52,7 +52,7 @@ public class ProcessRequest {
 
             for(Map.Entry<String, String> entrySet : ServerInfo.entrySet()){
                 String value = entrySet.getKey()+":"+entrySet.getValue();
-                string.append(value).append("\n");
+                string.append(value);
                 response = ResponseEncoder.BulkEncoder(string.toString());
             }
         }
