@@ -34,7 +34,7 @@ public class Main {
     serverSocketChannel.configureBlocking(false);
     serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
 
-    System.out.println("***Server started***");
+    System.out.println("***Server started***"); 
     
     Storage.addServerInfo("role", role);
     Storage.addServerInfo("master_replid", master_replid);
