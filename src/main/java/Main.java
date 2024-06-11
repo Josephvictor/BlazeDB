@@ -27,6 +27,7 @@ public class Main {
         }
       }
     }
+    System.out.println("[Master][host] and [port] "+replicaOf);
 
     Selector selector = Selector.open();
     ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
@@ -34,11 +35,12 @@ public class Main {
     serverSocketChannel.configureBlocking(false);
     serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
 
-    System.out.println("***Server started***"); 
+    System.out.println("[main] ***Server started***"); 
     
     Storage.addServerInfo("role", role);
     Storage.addServerInfo("master_replid", master_replid);
     Storage.addServerInfo("master_repl_offset", master_repl_offset);
+    System.out.println("[main] Server details added");
 
     while(true){
       int conns = selector.select();
