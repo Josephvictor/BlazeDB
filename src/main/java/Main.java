@@ -5,6 +5,7 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -16,18 +17,18 @@ public class Main {
     String role = "master";
     String master_replid = "8371b4fb1155b71f4a04d3e1bc3e18c4a990aeeb";
     String master_repl_offset = "0";
-    String replicaOf = "";  
+    String[] mHostAndmPort = null;
 
     if(args.length >= 2){
       for(int i = 0; i < args.length; i=i+2){
         if(args[i].equalsIgnoreCase("--port"))  port = Integer.valueOf(args[i+1]);
         else if(args[i].equalsIgnoreCase("--replicaof")){
-          replicaOf = args[i+1];
+          mHostAndmPort = args[i+1].split(" ");
           role = "slave";
         }
       }
     }
-    System.out.println("[Master][host] and [port] "+replicaOf);
+    System.out.println("[Master][host] and [port] "+Arrays.toString(mHostAndmPort));
 
     Selector selector = Selector.open();
     ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
@@ -41,6 +42,31 @@ public class Main {
     Storage.addServerInfo("master_replid", master_replid);
     Storage.addServerInfo("master_repl_offset", master_repl_offset);
     System.out.println("[main] Server details added");
+
+    if(role.equalsIgnoreCase("slave")){
+
+      SocketChannel socketChannel = SocketChannel.open();
+      socketChannel.configureBlocking(false);
+      socketChannel.register(selector, SelectionKey.OP_WRITE);
+
+      System.out.println("[main] Establishing connection to master");
+      socketChannel.connect(new InetSocketAddress(mHostAndmPort[0], Integer.parseInt(mHostAndmPort[1])));
+      System.out.println("[main] Master connection established");
+
+      ByteBuffer buffer = ByteBuffer.allocate(254);
+
+      //Make handshake
+      //1.PING
+      String connRequest = ResponseEncoder.ArraysEncoder("PING");
+      buffer.clear();
+      buffer.put(connRequest.getBytes());
+      buffer.flip();
+      while(buffer.hasRemaining()){
+        socketChannel.write(buffer);
+      }
+      buffer.clear();
+    }
+      
 
     while(true){
       int conns = selector.select();
@@ -62,7 +88,7 @@ public class Main {
 
         }else if(key.isReadable()){
           SocketChannel clientChannel = (SocketChannel) key.channel();
-          ByteBuffer buffer = ByteBuffer.allocate(10000);
+          ByteBuffer buffer = ByteBuffer.allocate(254);
           int byteRead = clientChannel.read(buffer);
           
           if(byteRead == -1){
