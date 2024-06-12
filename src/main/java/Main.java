@@ -140,7 +140,7 @@ public class Main {
           state = State.SENT_REPLCONF_CAPA;
         } else if(state == State.SENT_REPLCONF_CAPA && parsedElements.get(0).equals("OK")){
           state = State.SENT_PSYNC;
-        } else if(state == State.SENT_PSYNC && parsedElements.get(0).equals("FULLRESYNC"){
+        } else if(state == State.SENT_PSYNC && parsedElements.get(0).equals("FULLRESYNC")){
           state = State.FULLRESYNC;
         }
       }
