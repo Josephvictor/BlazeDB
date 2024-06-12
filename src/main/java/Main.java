@@ -126,7 +126,7 @@ public class Main {
       // System.out.println("currentState: "+state);
       // System.out.println("[command] "+parsedElements.get(0));
 
-      if(state == State.SENT_PSYNC && parsedElements.get(0).equals("FULLRESYNC")){
+      if(state == State.FULLRESYNC){
         state = State.COMPLETE;
         key.interestOps(SelectionKey.OP_READ);
       } else{
@@ -140,6 +140,8 @@ public class Main {
           state = State.SENT_REPLCONF_CAPA;
         } else if(state == State.SENT_REPLCONF_CAPA && parsedElements.get(0).equals("OK")){
           state = State.SENT_PSYNC;
+        } else if(state == State.SENT_PSYNC && parsedElements.get(0).equals("FULLRESYNC"){
+          state = State.FULLRESYNC;
         }
       }
     }
