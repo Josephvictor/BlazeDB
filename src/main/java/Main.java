@@ -53,10 +53,12 @@ public class Main {
       socketChannel.register(selector, SelectionKey.OP_WRITE);
       //Send the PING request
       String connRequest = ResponseEncoder.ArraysEncoder("PING");
-      ByteBuffer buffer = ByteBuffer.allocate(254);
-      buffer.put(connRequest.getBytes());
+      ByteBuffer buffer = ByteBuffer.wrap(connRequest.getBytes());
+      List<ByteBuffer> responseBuffer = new ArrayList<>();
+      responseBuffer.add(buffer);
+      BufferAttachment bufferAttachment = new BufferAttachment(responseBuffer);
       
-      socketChannel.keyFor(selector).attach(buffer);
+      socketChannel.keyFor(selector).attach(bufferAttachment);
       state = State.SENT_PING;
       System.out.println("[main] ***Replica started***"); 
     }
