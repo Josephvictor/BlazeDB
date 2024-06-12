@@ -118,7 +118,7 @@ public class Main {
       }
 
       String response = ProcessRequest.process(parsedElements);
-      System.out.println("[main][Response] "+response);
+      
       
       ByteBuffer responseBuffer = ByteBuffer.allocate(254);
       responseBuffer.put(response.getBytes());
@@ -128,11 +128,13 @@ public class Main {
 
       if(state == State.FULLRESYNC){
         state = State.COMPLETE;
+        System.out.println("[main][Response] "+response);
         key.interestOps(SelectionKey.OP_READ);
       } else{
         // Attach the response buffer to the key and switch to write mode
         key.attach(responseBuffer);
         key.interestOps(SelectionKey.OP_WRITE);
+        System.out.println("[main][Response] "+response);
 
         if(state == State.SENT_PING && parsedElements.get(0).equals("PONG")){
           state = State.SENT_REPLCONF_PORT;
