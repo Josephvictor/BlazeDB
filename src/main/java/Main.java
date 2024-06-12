@@ -123,7 +123,8 @@ public class Main {
       List<ByteBuffer> responseBuffer = new ArrayList<>();
       for(String str : response){
         System.out.println("[main][Response] "+str);
-        ByteBuffer buff = ByteBuffer.wrap(str.getBytes());
+        ByteBuffer buff = ByteBuffer.allocate(254);
+        buff.put(str.getBytes());
         responseBuffer.add(buff);
       }
 
