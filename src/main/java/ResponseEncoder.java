@@ -34,4 +34,8 @@ public class ResponseEncoder {
 
         return str.toString();
     }
+
+    public static String RdbFileEncoder(String message){
+        return String.format("%s%d%s%s%s",BulkStrings,message.length(),Cr,Lf,message);
+    }
 }

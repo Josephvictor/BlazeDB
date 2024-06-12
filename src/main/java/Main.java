@@ -5,6 +5,7 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -116,10 +117,17 @@ public class Main {
         parsedElements.add(state.toString());
       }
 
-      String response = ProcessRequest.process(parsedElements);
-      
-      ByteBuffer responseBuffer = ByteBuffer.allocate(254);
-      responseBuffer.put(response.getBytes());
+      List<String> response = ProcessRequest.process(parsedElements);
+      System.out.println("[main][Response] "+response);
+
+      List<ByteBuffer> responseBuffer = new ArrayList<>();
+      for(String str : response){
+        ByteBuffer buff = ByteBuffer.wrap(str.getBytes());
+        responseBuffer.add(buff);
+      }
+
+      // ByteBuffer responseBuffer = ByteBuffer.allocate(254);
+      // responseBuffer.put(response);
 
       // System.out.println("currentState: "+state);
       // System.out.println("[command] "+parsedElements.get(0));
@@ -130,7 +138,7 @@ public class Main {
         // Attach the response buffer to the key and switch to write mode
         key.attach(responseBuffer);
         key.interestOps(SelectionKey.OP_WRITE);
-        System.out.println("[main][Response] "+response+" --State: "+state);
+        //System.out.println("[main][Response] "+response+" --State: "+state);
 
         if(state == State.SENT_PING && parsedElements.get(0).equals("PONG")){
           state = State.SENT_REPLCONF_PORT;
@@ -139,22 +147,27 @@ public class Main {
         } else if(state == State.SENT_REPLCONF_CAPA && parsedElements.get(0).equals("OK")){
           state = State.SENT_PSYNC;
         }
-        System.err.println("Changed to state: "+state);
+        //System.err.println("Changed to state: "+state);
       }
     }
   }
 
   public static void handleWrite(SelectionKey key) throws IOException{
     SocketChannel socketChannel = (SocketChannel) key.channel();
-    ByteBuffer buffer = (ByteBuffer) key.attachment();
+    List<ByteBuffer> responseBuffer = (List<ByteBuffer>) key.attachment();
     
-    if(buffer != null){
-      buffer.flip();
-      while(buffer.hasRemaining()){
-        socketChannel.write(buffer);
+    if(!responseBuffer.isEmpty()){
+      Iterator<ByteBuffer> itr = responseBuffer.iterator();
+
+      while(itr.hasNext()){
+        ByteBuffer buffer = itr.next();
+        buffer.flip();
+        while(buffer.hasRemaining()){
+          socketChannel.write(buffer);
+        }
+        buffer.clear();
       }
     }
-    buffer.clear();
     key.attach(null);
     key.interestOps(SelectionKey.OP_READ);
   }
