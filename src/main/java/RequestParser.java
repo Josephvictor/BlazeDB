@@ -32,14 +32,19 @@ public class RequestParser {
                 }
                 index++;
             }
-        }else if(parts[index].charAt(0) == '+'){
-            parsedElements.add(parts[index].substring(1));
+        }else if(parts[0].charAt(0) == '+'){
+        //     parsedElements.add(parts[index].substring(1));
             
-            for(int i = 1; i < parts.length; i++){
-                parsedElements.add(parts[i]);
-                if(i==2)    break;
-            }
-        }
+        //     for(int i = 1; i < parts.length; i++){
+        //         parsedElements.add(parts[i]);
+        //         if(i==2)    break;
+        //     }
+            String simpleStr = parts[0];
+            parts = simpleStr.split(" ");
+            System.out.println("[parts] "+Arrays.toString(parts));
+
+            parsedElements = Arrays.asList(parts);
+         }
         else{
             parsedElements.add(parts[index].substring(1));
         }
