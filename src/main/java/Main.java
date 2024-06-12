@@ -100,7 +100,7 @@ public class Main {
     ByteBuffer buffer = ByteBuffer.allocate(254);
     buffer.clear();
     int byteRead = socketChannel.read(buffer);
-    if(byteRead == -1 || state == State.SENT_PSYNC){
+    if(byteRead == -1){
       socketChannel.close();
     }else {
       buffer.flip(); // Flip the buffer before reading
@@ -126,7 +126,6 @@ public class Main {
 
       if(state == State.SENT_PSYNC){
         state = State.FULLRESYNC;
-        socketChannel.close();
       } else{
         // Attach the response buffer to the key and switch to write mode
         key.attach(responseBuffer);
