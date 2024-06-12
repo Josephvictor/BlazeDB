@@ -103,7 +103,11 @@ public class Main {
     if(byteRead == -1){
       socketChannel.close();
     }else{
-      String message = new String(buffer.array()).trim();
+      buffer.flip(); // Flip the buffer before reading
+      byte[] data = new byte[buffer.remaining()];
+      buffer.get(data);
+
+      String message = new String(data).trim();
       System.out.println("[main][Received message] "+ message);
       
       List<String> parsedElements = RequestParser.parse(message);
