@@ -128,6 +128,7 @@ public class Main {
 
       if(state == State.SENT_PSYNC && parsedElements.get(0).equals("FULLRESYNC")){
         state = State.COMPLETE;
+        key.interestOps(SelectionKey.OP_READ);
       } else{
         // Attach the response buffer to the key and switch to write mode
         key.attach(responseBuffer);
