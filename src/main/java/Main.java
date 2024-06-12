@@ -30,13 +30,13 @@ public class Main {
     System.out.println("[main] Server details added");
 
     Selector selector = Selector.open();
-    if(role.equalsIgnoreCase("master")){
+    //if(role.equalsIgnoreCase("master")){
       ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
       serverSocketChannel.bind(new InetSocketAddress("localhost", port));
       serverSocketChannel.configureBlocking(false);
       serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
       System.out.println("[main] ***Server started***"); 
-    }
+    //}
     
     if(role.equalsIgnoreCase("slave")){
       SocketChannel socketChannel = SocketChannel.open();
@@ -102,7 +102,7 @@ public class Main {
     int byteRead = socketChannel.read(buffer);
     if(byteRead == -1 || state == State.SENT_PSYNC){
       socketChannel.close();
-    }else{
+    }else {
       buffer.flip(); // Flip the buffer before reading
       byte[] data = new byte[buffer.remaining()];
       buffer.get(data);
