@@ -33,7 +33,6 @@ public class ProcessRequest {
                 byte[] rBytes = ResponseEncoder.SimpleEncoder("OK").getBytes();
                 responseList.add(rBytes);
             }else{
-                //String arg1 = parsedElements.get(3);
                 long ttl = Long.parseLong(parsedElements.get(4));
                 long expirationTime = System.currentTimeMillis() + ttl;
                 Storage.addKeyValue(key, value, expirationTime);
@@ -60,15 +59,15 @@ public class ProcessRequest {
                 responseList.add(rBytes);
             }
         } else if(command.equalsIgnoreCase("INFO")){
-            StringBuilder string = new StringBuilder();
+            StringBuilder str = new StringBuilder();
             Map<String, String> ServerInfo = Storage.getServerInfo();
 
             for(Map.Entry<String, String> entrySet : ServerInfo.entrySet()){
                 String value = entrySet.getKey()+":"+entrySet.getValue();
-                string.append(value);
-                byte[] rBytes = ResponseEncoder.BulkEncoder(string.toString()).getBytes();
-                responseList.add(rBytes);
+                str.append(value);
             }
+            byte[] rBytes = ResponseEncoder.BulkEncoder(str.toString()).getBytes();
+            responseList.add(rBytes);
         } else if(command.equalsIgnoreCase("PONG")){
             byte[] rBytes = ResponseEncoder.ArraysEncoder("REPLCONF", "listening-port", 
             String.valueOf(Main.getPort())).getBytes();
@@ -88,8 +87,8 @@ public class ProcessRequest {
             byte[] rBytes = ResponseEncoder.SimpleEncoder("OK").getBytes();
             responseList.add(rBytes);
         } else if(command.equalsIgnoreCase("PSYNC")){
-            String replID = parsedElements.get(1);
-            String replOffset = parsedElements.get(2);
+            // String replID = parsedElements.get(1);
+            // String replOffset = parsedElements.get(2);
 
             String masterReplId = Main.getMasterReplId();
             String masterReplOffset = Main.getMasterReplOffset();
