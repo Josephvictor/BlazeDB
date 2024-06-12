@@ -34,12 +34,10 @@ public class RequestParser {
             }
         }else if(parts[index].charAt(0) == '+'){
             parsedElements.add(parts[index].substring(1));
-            parsedElements.add(parts[1]);
-            parsedElements.add(parts[2]);
-
-            // for(int i = 1; i < parts.length; i++){
-            //     parsedElements.add(parts[i]);
-            // }
+            
+            for(int i = 1; i <= 2; i++){
+                parsedElements.add(parts[i]);
+            }
         }
         else{
             parsedElements.add(parts[index].substring(1));
