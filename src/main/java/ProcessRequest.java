@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
@@ -98,7 +99,8 @@ public class ProcessRequest {
             responseList.add(rBytes);
             
             String rdbFile = "UkVESVMwMDEx+glyZWRpcy12ZXIFNy4yLjD6CnJlZGlzLWJpdHPAQPoFY3RpbWXCbQi8ZfoIdXNlZC1tZW3CsMQQAPoIYW9mLWJhc2XAAP/wbjv+wP9aog==";
-            rBytes = rdbFile.getBytes();
+
+            rBytes = Base64.getDecoder().decode(rdbFile);
             String fileLength = String.format("$%d\r\n", rBytes.length);   
             responseList.add(fileLength.getBytes());
             responseList.add(rBytes);
