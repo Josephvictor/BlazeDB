@@ -124,10 +124,8 @@ public class Main {
       // System.out.println("currentState: "+state);
       // System.out.println("[command] "+parsedElements.get(0));
 
-      if(state == State.FULLRESYNC){
-        state = State.COMPLETE;
-        System.err.println("Changed to state: "+state);
-        key.interestOps(SelectionKey.OP_READ);
+      if(state == State.SENT_PSYNC){
+        state = State.FULLRESYNC;
       } else{
         // Attach the response buffer to the key and switch to write mode
         key.attach(responseBuffer);
@@ -140,8 +138,6 @@ public class Main {
           state = State.SENT_REPLCONF_CAPA;
         } else if(state == State.SENT_REPLCONF_CAPA && parsedElements.get(0).equals("OK")){
           state = State.SENT_PSYNC;
-        } else if(state == State.SENT_PSYNC){
-          state = State.FULLRESYNC;
         }
         System.err.println("Changed to state: "+state);
       }
