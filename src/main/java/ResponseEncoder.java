@@ -22,7 +22,7 @@ public class ResponseEncoder {
     }
 
     public static String ArraysEncoder(String... message){
-        //return String.format("%s1%s%s%s%d%s%s%s%s%s", Arrays,Cr,Lf,BulkStrings,message.length,Cr,Lf,message,Cr,Lf);
+        
         int length = message.length;
         StringBuilder str = new StringBuilder();
         

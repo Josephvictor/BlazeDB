@@ -64,8 +64,9 @@ public class ProcessRequest {
             else if(parsedElements.get(1).equals(State.SENT_REPLCONF_CAPA.toString()))
                 response = ResponseEncoder.ArraysEncoder("PSYNC", "?", "-1");
             else
-                response = ""; 
-                
+                response = "";   
+        } else if(command.equalsIgnoreCase("REPLCONF")){
+            response = ResponseEncoder.SimpleEncoder("OK");
         }
         
         return response;

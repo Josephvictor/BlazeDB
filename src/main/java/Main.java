@@ -17,14 +17,12 @@ public class Main {
   private static String master_replid = "8371b4fb1155b71f4a04d3e1bc3e18c4a990aeeb";
   private static String master_repl_offset = "0";
   private static String[] mHostAndmPort = null;
-
   //Track the 3 way handshake process
   private static State state = State.INITIAL;
 
   public static void main(String[] args) throws IOException{
 
     processArguments(args);
-    System.out.println("[Master][host] and [port] "+Arrays.toString(mHostAndmPort));
 
     Selector selector = Selector.open();
     ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
@@ -118,14 +116,16 @@ public class Main {
       ByteBuffer responseBuffer = ByteBuffer.allocate(254);
       responseBuffer.put(response.getBytes());
 
-      System.out.println("currentState: "+state);
-      System.out.println("[command] "+parsedElements.get(0));
+      // System.out.println("currentState: "+state);
+      // System.out.println("[command] "+parsedElements.get(0));
+
       if(state == State.SENT_PSYNC && parsedElements.get(0).equals("FULLRESYNC")){
         state = State.COMPLETE;
       } else{
         // Attach the response buffer to the key and switch to write mode
         key.attach(responseBuffer);
         key.interestOps(SelectionKey.OP_WRITE);
+
         if(state == State.SENT_PING && parsedElements.get(0).equals("PONG")){
           state = State.SENT_REPLCONF_PORT;
         }else if(state == State.SENT_REPLCONF_PORT && parsedElements.get(0).equals("OK")){
@@ -165,6 +165,7 @@ public class Main {
           role = "slave";
         }
       }
+      System.out.println("[Master][host] and [port] "+Arrays.toString(mHostAndmPort));
     }
   }
 
