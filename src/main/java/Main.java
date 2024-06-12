@@ -118,13 +118,12 @@ public class Main {
         parsedElements.add(state.toString());
       }
 
-      List<String> response = ProcessRequest.process(parsedElements);
+      List<byte[]> response = ProcessRequest.process(parsedElements);
       
       List<ByteBuffer> responseBuffer = new ArrayList<>();
-      for(String str : response){
-        System.out.println("[main][Response] "+str);
+      for(byte[] rBytes : response){
         ByteBuffer buff = ByteBuffer.allocate(254);
-        buff.put(str.getBytes());
+        buff.put(rBytes);
         responseBuffer.add(buff);
       }
 

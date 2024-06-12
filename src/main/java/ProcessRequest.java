@@ -4,16 +4,18 @@ import java.util.Map;
 
 public class ProcessRequest {
     
-    public static List<String> process(List<String> parsedElements){
-        List<String> responseList = new ArrayList<>();
+    public static List<byte[]> process(List<String> parsedElements){
+        List<byte[]> responseList = new ArrayList<>();
         
         String command = parsedElements.get(0);
 
         if(command.equalsIgnoreCase("PING")){
-            responseList.add(ResponseEncoder.SimpleEncoder("PONG"));
+            byte[] rBytes = ResponseEncoder.SimpleEncoder("PONG").getBytes();
+            responseList.add(rBytes);
 
         } else if(command.equalsIgnoreCase("ECHO")){
-            responseList.add(ResponseEncoder.BulkEncoder(parsedElements.get(1)));
+            byte[] rBytes = ResponseEncoder.BulkEncoder(parsedElements.get(1)).getBytes();
+            responseList.add(rBytes);
 
         } else if(command.equalsIgnoreCase("SET")){
             
@@ -27,13 +29,15 @@ public class ProcessRequest {
 
             if(parsedElements.size() == 3){
                 Storage.addKeyValue(key, value, 0L);
-                responseList.add(ResponseEncoder.SimpleEncoder("OK"));
+                byte[] rBytes = ResponseEncoder.SimpleEncoder("OK").getBytes();
+                responseList.add(rBytes);
             }else{
                 //String arg1 = parsedElements.get(3);
                 long ttl = Long.parseLong(parsedElements.get(4));
                 long expirationTime = System.currentTimeMillis() + ttl;
                 Storage.addKeyValue(key, value, expirationTime);
-                responseList.add(ResponseEncoder.SimpleEncoder("OK"));
+                byte[] rBytes = ResponseEncoder.SimpleEncoder("OK").getBytes();
+                responseList.add(rBytes);
             }
         } else if(command.equalsIgnoreCase("GET")){
             if(parsedElements.size() != 2){
@@ -46,10 +50,14 @@ public class ProcessRequest {
             long currentTimeMillis = System.currentTimeMillis();
             String value = Storage.getValue(key, currentTimeMillis);
 
-            if(value.equals("-1"))  
-                responseList.add(ResponseEncoder.NullBulkString());
-            else 
-                responseList.add(ResponseEncoder.BulkEncoder(value));
+            if(value.equals("-1")){
+                byte[] rBytes = (ResponseEncoder.NullBulkString()).getBytes();
+                responseList.add(rBytes);
+            }
+            else {
+                byte[] rBytes = ResponseEncoder.BulkEncoder(value).getBytes();
+                responseList.add(rBytes);
+            }
         } else if(command.equalsIgnoreCase("INFO")){
             StringBuilder string = new StringBuilder();
             Map<String, String> ServerInfo = Storage.getServerInfo();
@@ -57,34 +65,44 @@ public class ProcessRequest {
             for(Map.Entry<String, String> entrySet : ServerInfo.entrySet()){
                 String value = entrySet.getKey()+":"+entrySet.getValue();
                 string.append(value);
-                responseList.add(ResponseEncoder.BulkEncoder(string.toString()));
+                byte[] rBytes = ResponseEncoder.BulkEncoder(string.toString()).getBytes();
+                responseList.add(rBytes);
             }
         } else if(command.equalsIgnoreCase("PONG")){
-            responseList.add(ResponseEncoder.ArraysEncoder("REPLCONF", "listening-port", 
-                                String.valueOf(Main.getPort())));
+            byte[] rBytes = ResponseEncoder.ArraysEncoder("REPLCONF", "listening-port", 
+            String.valueOf(Main.getPort())).getBytes();
+            responseList.add(rBytes);
         } else if(command.equalsIgnoreCase("OK")){
-            if(parsedElements.get(1).equals(State.SENT_REPLCONF_PORT.toString()))
-            responseList.add(ResponseEncoder.ArraysEncoder("REPLCONF", "capa", "psync2"));
-            else if(parsedElements.get(1).equals(State.SENT_REPLCONF_CAPA.toString()))
-            responseList.add(ResponseEncoder.ArraysEncoder("PSYNC", "?", "-1"));
+            if(parsedElements.get(1).equals(State.SENT_REPLCONF_PORT.toString())){
+                byte[] rBytes = ResponseEncoder.ArraysEncoder("REPLCONF", "capa", "psync2").getBytes();
+                responseList.add(rBytes);
+            }
+            else if(parsedElements.get(1).equals(State.SENT_REPLCONF_CAPA.toString())){
+                byte[] rBytes = ResponseEncoder.ArraysEncoder("PSYNC", "?", "-1").getBytes();
+                responseList.add(rBytes);
+            }
             else
                 return null;   
         } else if(command.equalsIgnoreCase("REPLCONF") || command.equalsIgnoreCase("FULLRESYNC")){
-            responseList.add(ResponseEncoder.SimpleEncoder("OK"));
+            byte[] rBytes = ResponseEncoder.SimpleEncoder("OK").getBytes();
+            responseList.add(rBytes);
         } else if(command.equalsIgnoreCase("PSYNC")){
             String replID = parsedElements.get(1);
             String replOffset = parsedElements.get(2);
 
             String masterReplId = Main.getMasterReplId();
             String masterReplOffset = Main.getMasterReplOffset();
-            responseList.add(ResponseEncoder.
-                SimpleEncoder(String.format("FULLRESYNC %s %s", 
-                                        masterReplId, masterReplOffset)));
+            byte[] rBytes = ResponseEncoder.
+            SimpleEncoder(String.format("FULLRESYNC %s %s", 
+                                    masterReplId, masterReplOffset)).getBytes();
+            responseList.add(rBytes);
             
             String rdbFile = "UkVESVMwMDEx+glyZWRpcy12ZXIFNy4yLjD6CnJlZGlzLWJpdHPAQPoFY3RpbWXCbQi8ZfoIdXNlZC1tZW3CsMQQAPoIYW9mLWJhc2XAAP/wbjv+wP9aog==";
-            String fileLength = String.format("$%d\r\n", rdbFile.length());   
-            responseList.add(fileLength);
-            responseList.add(rdbFile);
+            rBytes = rdbFile.getBytes();
+            String fileLength = String.format("$%d\r\n", rBytes.length);   
+            responseList.add(fileLength.getBytes());
+            responseList.add(rBytes);
+            
         }
         
         return responseList;
