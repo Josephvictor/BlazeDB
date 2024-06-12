@@ -134,7 +134,7 @@ public class Main {
         // Attach the response buffer to the key and switch to write mode
         key.attach(responseBuffer);
         key.interestOps(SelectionKey.OP_WRITE);
-        System.out.println("[main][Response] "+response);
+        System.out.println("[main][Response] "+response+" --State: "+state);
 
         if(state == State.SENT_PING && parsedElements.get(0).equals("PONG")){
           state = State.SENT_REPLCONF_PORT;
