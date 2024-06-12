@@ -35,7 +35,7 @@ public class RequestParser {
         }else if(parts[index].charAt(0) == '+'){
             parsedElements.add(parts[index].substring(1));
             
-            for(int i = 1; i <= parts.length; i++){
+            for(int i = 1; i < parts.length; i++){
                 parsedElements.add(parts[i]);
                 if(i==2)    break;
             }
