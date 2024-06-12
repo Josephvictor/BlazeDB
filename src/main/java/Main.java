@@ -166,6 +166,7 @@ public class Main {
         ByteBuffer buffer = itr.next();
         buffer.flip();
         while(buffer.hasRemaining()){
+          System.out.println("****Writing****");
           socketChannel.write(buffer);
         }
         buffer.clear();
