@@ -30,14 +30,14 @@ public class Main {
     System.out.println("[main] Server details added");
 
     Selector selector = Selector.open();
-    
+
     ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
     serverSocketChannel.bind(new InetSocketAddress("localhost", port));
     serverSocketChannel.configureBlocking(false);
     serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
     System.out.println("[main] ***Server started***"); 
     
-    else if(role.equalsIgnoreCase("slave")){
+    if(role.equalsIgnoreCase("slave")){
 
       SocketChannel socketChannel = SocketChannel.open();
       System.out.println("[main] Establishing connection to master");
