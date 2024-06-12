@@ -142,6 +142,7 @@ public class Main {
         } else if(state == State.SENT_REPLCONF_CAPA && parsedElements.get(0).equals("OK")){
           state = State.SENT_PSYNC;
         }
+        System.out.println("Changed to state: "+state);
       }
     }
   }
