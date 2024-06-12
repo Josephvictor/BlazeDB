@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -119,13 +120,14 @@ public class Main {
 
       List<String> response = ProcessRequest.process(parsedElements);
       
-
       List<ByteBuffer> responseBuffer = new ArrayList<>();
       for(String str : response){
         System.out.println("[main][Response] "+str);
         ByteBuffer buff = ByteBuffer.wrap(str.getBytes());
         responseBuffer.add(buff);
       }
+
+      BufferAttachment bufferAttachment = new BufferAttachment(responseBuffer);
 
       // ByteBuffer responseBuffer = ByteBuffer.allocate(254);
       // responseBuffer.put(response);
@@ -137,7 +139,7 @@ public class Main {
         state = State.FULLRESYNC;
       } else{
         // Attach the response buffer to the key and switch to write mode
-        key.attach(responseBuffer);
+        key.attach(bufferAttachment);
         key.interestOps(SelectionKey.OP_WRITE);
         //System.out.println("[main][Response] "+response+" --State: "+state);
 
@@ -155,7 +157,7 @@ public class Main {
 
   public static void handleWrite(SelectionKey key) throws IOException{
     SocketChannel socketChannel = (SocketChannel) key.channel();
-    List<ByteBuffer> responseBuffer = (List<ByteBuffer>) key.attachment();
+    List<ByteBuffer> responseBuffer = ((BufferAttachment) key.attachment()).getBuffers();
     
     if(!responseBuffer.isEmpty()){
       Iterator<ByteBuffer> itr = responseBuffer.iterator();
