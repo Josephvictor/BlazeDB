@@ -118,10 +118,11 @@ public class Main {
       }
 
       List<String> response = ProcessRequest.process(parsedElements);
-      System.out.println("[main][Response] "+response);
+      
 
       List<ByteBuffer> responseBuffer = new ArrayList<>();
       for(String str : response){
+        System.out.println("[main][Response] "+str);
         ByteBuffer buff = ByteBuffer.wrap(str.getBytes());
         responseBuffer.add(buff);
       }
