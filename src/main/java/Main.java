@@ -118,7 +118,6 @@ public class Main {
 
       String response = ProcessRequest.process(parsedElements);
       
-      
       ByteBuffer responseBuffer = ByteBuffer.allocate(254);
       responseBuffer.put(response.getBytes());
 
@@ -127,6 +126,7 @@ public class Main {
 
       if(state == State.SENT_PSYNC){
         state = State.FULLRESYNC;
+        System.err.println("Changed to state: "+state);
         System.out.println("[main][Response] "+response);
         key.interestOps(SelectionKey.OP_READ);
       } else{
@@ -142,7 +142,7 @@ public class Main {
         } else if(state == State.SENT_REPLCONF_CAPA && parsedElements.get(0).equals("OK")){
           state = State.SENT_PSYNC;
         }
-        System.out.println("Changed to state: "+state);
+        System.err.println("Changed to state: "+state);
       }
     }
   }
