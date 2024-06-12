@@ -30,15 +30,15 @@ public class Main {
     System.out.println("[main] Server details added");
 
     Selector selector = Selector.open();
-
-    ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
-    serverSocketChannel.bind(new InetSocketAddress("localhost", port));
-    serverSocketChannel.configureBlocking(false);
-    serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
-    System.out.println("[main] ***Server started***"); 
+    if(role.equalsIgnoreCase("master")){
+      ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
+      serverSocketChannel.bind(new InetSocketAddress("localhost", port));
+      serverSocketChannel.configureBlocking(false);
+      serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
+      System.out.println("[main] ***Server started***"); 
+    }
     
     if(role.equalsIgnoreCase("slave")){
-
       SocketChannel socketChannel = SocketChannel.open();
       System.out.println("[main] Establishing connection to master");
       socketChannel.connect(new InetSocketAddress(mHostAndmPort[0], Integer.parseInt(mHostAndmPort[1])));
