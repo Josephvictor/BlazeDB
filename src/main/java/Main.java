@@ -126,7 +126,7 @@ public class Main {
 
       if(state == State.SENT_PSYNC){
         state = State.FULLRESYNC;
-        key.interestOps(SelectionKey.OP_READ);
+        socketChannel.close();
       } else{
         // Attach the response buffer to the key and switch to write mode
         key.attach(responseBuffer);
