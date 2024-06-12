@@ -81,8 +81,10 @@ public class ProcessRequest {
                 SimpleEncoder(String.format("FULLRESYNC %s %s", 
                                         masterReplId, masterReplOffset)));
             
-            responseList.add(ResponseEncoder.RdbFileEncoder("UkVESVMwMDEx+glyZWRpcy12ZXIFNy4yLjD6CnJlZGlzLWJpdHPAQPoFY3RpbWXCbQi8ZfoIdXNlZC1tZW3CsMQQAPoIYW9mLWJhc2XAAP/wbjv+wP9aog=="));
-
+            String rdb = ResponseEncoder.RdbFileEncoder("UkVESVMwMDEx+glyZWRpcy12ZXIFNy4yLjD6CnJlZGlzLWJpdHPAQPoFY3RpbWXCbQi8ZfoIdXNlZC1tZW3CsMQQAPoIYW9mLWJhc2XAAP/wbjv+wP9aog==");
+            String[] rdbArr = rdb.split("\r\n");
+            responseList.add(rdbArr[0]);
+            responseList.add(rdbArr[1]);
         }
         
         return responseList;
