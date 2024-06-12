@@ -65,7 +65,7 @@ public class ProcessRequest {
                 response = ResponseEncoder.ArraysEncoder("PSYNC", "?", "-1");
             else
                 response = "";   
-        } else if(command.equalsIgnoreCase("REPLCONF")){
+        } else if(command.equalsIgnoreCase("REPLCONF") || command.equalsIgnoreCase("FULLRESYNC")){
             response = ResponseEncoder.SimpleEncoder("OK");
         } else if(command.equalsIgnoreCase("PSYNC")){
             String replID = parsedElements.get(1);

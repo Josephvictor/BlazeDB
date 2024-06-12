@@ -104,16 +104,16 @@ public class Main {
       socketChannel.close();
     }else{
       String message = new String(buffer.array()).trim();
-      System.out.println("[Received message] "+ message);
+      System.out.println("[main][Received message] "+ message);
       
       List<String> parsedElements = RequestParser.parse(message);
-      System.out.println("[main] "+parsedElements);
+      System.out.println("[main][parsedElements] "+parsedElements);
       if(parsedElements.get(0).equals("OK")){
         parsedElements.add(state.toString());
       }
 
       String response = ProcessRequest.process(parsedElements);
-      System.out.println("[Response] "+response);
+      System.out.println("[main][Response] "+response);
       
       ByteBuffer responseBuffer = ByteBuffer.allocate(254);
       responseBuffer.put(response.getBytes());
