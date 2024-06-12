@@ -82,7 +82,7 @@ public class ProcessRequest {
                                         masterReplId, masterReplOffset)));
             
             String rdbFile = "UkVESVMwMDEx+glyZWRpcy12ZXIFNy4yLjD6CnJlZGlzLWJpdHPAQPoFY3RpbWXCbQi8ZfoIdXNlZC1tZW3CsMQQAPoIYW9mLWJhc2XAAP/wbjv+wP9aog==";
-            String fileLength = String.valueOf(rdbFile.length())+"\r\n";
+            String fileLength = String.format("$%d\r\n", rdbFile.length());   
             responseList.add(fileLength);
             responseList.add(rdbFile);
         }
