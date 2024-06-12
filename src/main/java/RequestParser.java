@@ -43,7 +43,9 @@ public class RequestParser {
             parts = simpleStr.split(" ");
             System.out.println("[parts] "+Arrays.toString(parts));
 
-            parsedElements = Arrays.asList(parts);
+            for(String s : parts){
+                parsedElements.add(s);
+            }
          }
         else{
             parsedElements.add(parts[index].substring(1));
