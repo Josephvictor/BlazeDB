@@ -39,7 +39,7 @@ public class RequestParser {
         //         parsedElements.add(parts[i]);
         //         if(i==2)    break;
         //     }
-            String simpleStr = parts[0];
+            String simpleStr = parts[0].substring(1);
             parts = simpleStr.split(" ");
             System.out.println("[parts] "+Arrays.toString(parts));
 
