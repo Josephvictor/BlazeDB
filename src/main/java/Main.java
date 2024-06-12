@@ -23,21 +23,22 @@ public class Main {
   public static void main(String[] args) throws IOException{
 
     processArguments(args);
-
-    Selector selector = Selector.open();
-    ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
-    serverSocketChannel.bind(new InetSocketAddress("localhost", port));
-    serverSocketChannel.configureBlocking(false);
-    serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
-
-    System.out.println("[main] ***Server started***"); 
     
     Storage.addServerInfo("role", role);
     Storage.addServerInfo("master_replid", master_replid);
     Storage.addServerInfo("master_repl_offset", master_repl_offset);
     System.out.println("[main] Server details added");
 
-    if(role.equalsIgnoreCase("slave")){
+    Selector selector = Selector.open();
+
+    if(role.equalsIgnoreCase("master")){
+      ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
+      serverSocketChannel.bind(new InetSocketAddress("localhost", port));
+      serverSocketChannel.configureBlocking(false);
+      serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
+      System.out.println("[main] ***Server started***"); 
+    }
+    else if(role.equalsIgnoreCase("slave")){
 
       SocketChannel socketChannel = SocketChannel.open();
       System.out.println("[main] Establishing connection to master");
@@ -56,6 +57,7 @@ public class Main {
       
       socketChannel.keyFor(selector).attach(buffer);
       state = State.SENT_PING;
+      System.out.println("[main] ***Replica started***"); 
     }
 
     eventLoop(selector);
@@ -154,6 +156,14 @@ public class Main {
 
   public static int getPort(){
     return port;
+  }
+
+  public static String getMasterReplId(){
+    return master_replid;
+  }
+
+  public static String getMasterReplOffset(){
+    return master_repl_offset;
   }
 
   private static void processArguments(String[] args){

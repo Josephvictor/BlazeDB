@@ -67,6 +67,14 @@ public class ProcessRequest {
                 response = "";   
         } else if(command.equalsIgnoreCase("REPLCONF")){
             response = ResponseEncoder.SimpleEncoder("OK");
+        } else if(command.equalsIgnoreCase("PSYNC")){
+            String replID = parsedElements.get(1);
+            String replOffset = parsedElements.get(2);
+
+            String masterReplId = Main.getMasterReplId();
+            String masterReplOffset = Main.getMasterReplOffset();
+            response = ResponseEncoder.SimpleEncoder(String.format("FULLRESYNC %s %s", masterReplId, masterReplOffset));
+
         }
         
         return response;
