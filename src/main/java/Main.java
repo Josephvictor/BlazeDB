@@ -99,6 +99,7 @@ public class Main {
 
     SocketChannel socketChannel = (SocketChannel) key.channel();
     ByteBuffer buffer = ByteBuffer.allocate(254);
+    buffer.clear();
     int byteRead = socketChannel.read(buffer);
     if(byteRead == -1){
       socketChannel.close();
